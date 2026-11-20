@@ -60,14 +60,28 @@ function matchesType(cat, mode) {
   return !mode || cat.source_type === mode;
 }
 
-function placeholder(cat) {
+// 沒有照片時使用統一的黑貓占位圖；占位圖也載入失敗時，退回文字占位框
+const PLACEHOLDER_IMG = "assets/no-photo.jpg";
+
+function textPlaceholder() {
   return makeEl("div", "media placeholder", "無照片");
 }
 
-// 有圖片網址就顯示圖片；沒有網址或載入失敗時，都換成統一的占位框
+function placeholder() {
+  const wrap = makeEl("div", "media");
+  const img = makeEl("img");
+  img.src = PLACEHOLDER_IMG;
+  img.alt = "無照片";
+  img.decoding = "async";
+  img.addEventListener("error", () => wrap.replaceWith(textPlaceholder()));
+  wrap.append(img);
+  return wrap;
+}
+
+// 有圖片網址就顯示圖片；沒有網址或載入失敗時，都換成統一的占位圖
 function buildMedia(cat) {
   if (!cat.image || !/^https?:\/\//.test(cat.image)) {
-    return placeholder(cat);
+    return placeholder();
   }
   const wrap = makeEl("div", "media");
   const img = makeEl("img");
@@ -76,7 +90,7 @@ function buildMedia(cat) {
   img.loading = "lazy";
   img.decoding = "async";
   img.referrerPolicy = "no-referrer";
-  img.addEventListener("error", () => wrap.replaceWith(placeholder(cat)));
+  img.addEventListener("error", () => wrap.replaceWith(placeholder()));
   wrap.append(img);
   return wrap;
 }

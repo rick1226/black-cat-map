@@ -8,11 +8,19 @@
   <link rel="dns-prefetch" href="https://www.pet.gov.tw">
   <style>
     :root { color-scheme: light dark; font-family: system-ui, "Noto Sans TC", sans-serif; }
-    body { margin: 0; padding: 16px; max-width: 960px; margin-inline: auto; }
+    body { margin: 0; padding: 16px; max-width: 1100px; margin-inline: auto; }
+
+    /* 版面：左側欄放 logo（捲動時固定在畫面左側），右側放內容 */
+    .layout { display: grid; grid-template-columns: 200px minmax(0, 1fr); gap: 24px; align-items: start; }
+    .side { position: sticky; top: 16px; }
+    .brand-logo { width: 100%; height: auto; display: block; }
+    .content { min-width: 0; }
+
     header { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 12px; }
     header .title { flex: 1; text-align: center; }
     header h1 { margin: 0 0 4px; font-size: 1.5rem; }
-    .brand-logo, .brand-mascot { height: 72px; width: auto; flex: none; }
+    .brand-mascot { height: 72px; width: auto; flex: none; }
+
     #more { margin: 16px auto; display: block; font-size: 1rem; padding: 8px 20px; cursor: pointer; }
     #updated { color: #888; font-size: .9rem; margin: 0 0 12px; }
     label { font-weight: 600; margin-right: 8px; }
@@ -32,42 +40,56 @@
     .card a { margin-top: auto; font-size: .9rem; }
     #empty { color: #888; padding: 24px 0; }
     footer { margin-top: 24px; font-size: .8rem; color: #888; }
+
+    /* 手機與平板：改成單欄，logo 回到上方 */
+    @media (max-width: 800px) {
+      .layout { grid-template-columns: 1fr; }
+      .side { position: static; }
+      .brand-logo { width: 140px; }
+    }
   </style>
 </head>
 <body>
-  <header>
-    <img class="brand-logo" src="assets/logo.jpg" alt="黑貓閣樓">
-    <div class="title">
-      <h1>黑貓認養地圖</h1>
-      <p id="updated">載入中…</p>
-    </div>
-    <img class="brand-mascot" src="assets/mascot.jpg" alt="">
-  </header>
+  <div class="layout">
+    <aside class="side">
+      <img class="brand-logo" src="assets/logo.jpg" alt="黑貓閣樓">
+    </aside>
 
-  <label for="county">選擇縣市</label>
-  <select id="county"></select>
+    <main class="content">
+      <header>
+        <div class="title">
+          <h1>黑貓認養地圖</h1>
+          <p id="updated">載入中…</p>
+        </div>
+        <img class="brand-mascot" src="assets/mascot.jpg" alt="">
+      </header>
 
-  <label for="sort">排序</label>
-  <select id="sort">
-    <option value="">預設</option>
-    <option value="age-asc">年齡：由小到大</option>
-  </select>
+      <label for="county">選擇縣市</label>
+      <select id="county"></select>
 
-  <label for="type">來源</label>
-  <select id="type">
-    <option value="">全部</option>
-    <option value="public">公家</option>
-    <option value="private">民間</option>
-  </select>
+      <label for="sort">排序</label>
+      <select id="sort">
+        <option value="">預設</option>
+        <option value="age-asc">年齡：由小到大</option>
+      </select>
 
-  <p id="summary"></p>
-  <div id="grid"></div>
-  <button id="more" type="button" hidden>載入更多</button>
-  <p id="empty" hidden>這個縣市目前沒有可認養的黑貓。</p>
+      <label for="type">來源</label>
+      <select id="type">
+        <option value="">全部</option>
+        <option value="public">公家</option>
+        <option value="private">民間</option>
+      </select>
 
-  <footer>
-    資料來源：農業部動物認領養等公開資料。點擊卡片可前往原始網站確認最新狀態。
-  </footer>
+      <p id="summary"></p>
+      <div id="grid"></div>
+      <button id="more" type="button" hidden>載入更多</button>
+      <p id="empty" hidden>這個縣市目前沒有可認養的黑貓。</p>
+
+      <footer>
+        資料來源：農業部動物認領養等公開資料。點擊卡片可前往原始網站確認最新狀態。
+      </footer>
+    </main>
+  </div>
 
   <script src="app.js"></script>
 </body>
