@@ -130,5 +130,30 @@ class DisplayTests(unittest.TestCase):
         self.assertEqual(build_cat(raw, TODAY)["sex"], "母")
 
 
+class AgeTests(unittest.TestCase):
+    def cat(self, age):
+        raw = {"animal_id": "50", "animal_kind": "貓", "animal_colour": "黑色"}
+        if age is not None:
+            raw["animal_age"] = age
+        return build_cat(raw, TODAY)
+
+    def test_known_age_labelled_in_chinese(self):
+        self.assertEqual(self.cat("ADULT")["age"], "成年")
+        self.assertEqual(self.cat("CHILD")["age"], "幼齡")
+
+    def test_child_ranks_younger_than_adult(self):
+        self.assertLess(self.cat("CHILD")["age_rank"], self.cat("ADULT")["age_rank"])
+
+    def test_unknown_age_kept_raw_and_ranked_last(self):
+        cat = self.cat("SENIOR")
+        self.assertEqual(cat["age"], "SENIOR")
+        self.assertEqual(cat["age_rank"], 99)
+
+    def test_missing_age_ranked_last(self):
+        cat = self.cat(None)
+        self.assertEqual(cat["age"], "")
+        self.assertEqual(cat["age_rank"], 99)
+
+
 if __name__ == "__main__":
     unittest.main()

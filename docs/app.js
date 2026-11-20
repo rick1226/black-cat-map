@@ -11,6 +11,7 @@ const gridEl = document.getElementById("grid");
 const summaryEl = document.getElementById("summary");
 const emptyEl = document.getElementById("empty");
 const updatedEl = document.getElementById("updated");
+const sortEl = document.getElementById("sort");
 
 let cats = [];
 
@@ -49,18 +50,29 @@ function matches(cat, selected) {
   return cat.county === selected;
 }
 
+function placeholder(cat) {
+  return makeEl("div", "media placeholder", "無照片");
+}
+
+// 有圖片網址就顯示圖片；沒有網址或載入失敗時，都換成統一的占位框
+function buildMedia(cat) {
+  if (!cat.image || !/^https?:\/\//.test(cat.image)) {
+    return placeholder(cat);
+  }
+  const wrap = makeEl("div", "media");
+  const img = makeEl("img");
+  img.src = cat.image;
+  img.alt = cat.name;
+  img.loading = "lazy";
+  img.referrerPolicy = "no-referrer";
+  img.addEventListener("error", () => wrap.replaceWith(placeholder(cat)));
+  wrap.append(img);
+  return wrap;
+}
+
 function buildCard(cat) {
   const card = makeEl("article", "card");
-
-  if (cat.image && /^https?:\/\//.test(cat.image)) {
-    const img = makeEl("img");
-    img.src = cat.image;
-    img.alt = cat.name;
-    img.loading = "lazy";
-    img.referrerPolicy = "no-referrer";
-    img.addEventListener("error", () => img.remove());
-    card.append(img);
-  }
+  card.append(buildMedia(cat));
 
   const body = makeEl("div", "body");
   body.append(makeEl("h2", "", cat.name));
@@ -78,9 +90,17 @@ function buildCard(cat) {
   return card;
 }
 
+function sortCats(list, mode) {
+  if (mode === "age-asc") {
+    // age_rank 越小越年輕；未知年齡排在最後。Array.prototype.sort 穩定，同年齡保留原順序
+    return [...list].sort((a, b) => (a.age_rank ?? 99) - (b.age_rank ?? 99));
+  }
+  return list;
+}
+
 function render() {
   const selected = selectEl.value;
-  const visible = cats.filter((cat) => matches(cat, selected));
+  const visible = sortCats(cats.filter((cat) => matches(cat, selected)), sortEl.value);
 
   gridEl.replaceChildren(...visible.map(buildCard));
   emptyEl.hidden = visible.length > 0;
@@ -107,4 +127,5 @@ async function load() {
 }
 
 selectEl.addEventListener("change", render);
+sortEl.addEventListener("change", render);
 load();

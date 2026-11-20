@@ -51,6 +51,12 @@ def is_black_cat(kind, colour, title):
 
 SEX_LABEL = {"M": "公", "F": "母"}
 
+# 年齡代碼：只放已確認的值。CHILD 比 ADULT 年輕，數字越小越年輕。
+# 其他未知代碼保留原字串，排序時放最後。
+AGE_LABEL = {"CHILD": "幼齡", "ADULT": "成年"}
+AGE_RANK = {"CHILD": 1, "ADULT": 2}
+UNKNOWN_AGE_RANK = 99
+
 
 def is_open_for_adoption(raw, today):
     """狀態為 OPEN，且開放認養截止日尚未過（沒有截止日或 2999-12-31 視為未截止）。
@@ -83,6 +89,7 @@ def build_cat(raw, today):
     place = _get(raw, "animal_place", "動物的實際所在地")
     shelter = _get(raw, "shelter_name")
     sex = _get(raw, "animal_sex", "動物性別")
+    age_code = _get(raw, "animal_age", "動物年紀").upper()
 
     return {
         "id": f"coa-{animal_id}",
@@ -90,7 +97,8 @@ def build_cat(raw, today):
         "kind": kind,
         "colour": colour or "（依標題判斷為黑色）",
         "sex": SEX_LABEL.get(sex, ""),
-        "age": _get(raw, "animal_age", "動物年紀"),
+        "age": AGE_LABEL.get(age_code, age_code),
+        "age_rank": AGE_RANK.get(age_code, UNKNOWN_AGE_RANK),
         "county": county_of(address, place, shelter),
         "shelter": shelter,
         "address": address,

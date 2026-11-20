@@ -14,7 +14,9 @@
     #summary { margin: 12px 0; color: #666; }
     #grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; }
     .card { border: 1px solid #8884; border-radius: 10px; overflow: hidden; display: flex; flex-direction: column; }
-    .card img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; background: #8882; }
+    .media { width: 100%; aspect-ratio: 4 / 3; background: #8882; }
+    .media img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .placeholder { display: grid; place-items: center; color: #888; font-size: .9rem; }
     .card .body { padding: 10px; display: flex; flex-direction: column; gap: 4px; flex: 1; }
     .card h2 { font-size: 1rem; margin: 0; }
     .meta { font-size: .85rem; color: #777; }
@@ -31,6 +33,12 @@
 
   <label for="county">選擇縣市</label>
   <select id="county"></select>
+
+  <label for="sort">排序</label>
+  <select id="sort">
+    <option value="">預設</option>
+    <option value="age-asc">年齡：由小到大</option>
+  </select>
 
   <p id="summary"></p>
   <div id="grid"></div>
