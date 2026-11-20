@@ -1,5 +1,7 @@
 """把農業部動物認領養的原始資料轉成統一格式，並只保留黑貓。"""
 
+from urllib.parse import quote
+
 COUNTIES = (
     "臺北市", "新北市", "桃園市", "臺中市", "臺南市", "高雄市",
     "基隆市", "新竹市", "嘉義市",
@@ -7,7 +9,15 @@ COUNTIES = (
     "屏東縣", "宜蘭縣", "花蓮縣", "臺東縣", "澎湖縣", "金門縣", "連江縣",
 )
 
-COA_PAGE = "https://data.coa.gov.tw/Query/ServiceTransDetail.aspx?id=QcbUEzN6E6DL"
+# 原本的 data.coa.gov.tw 網域已無法解析，改指向 data.gov.tw 的資料集頁面
+COA_PAGE = "https://data.gov.tw/dataset/85903"
+
+
+def shelter_search_url(shelter):
+    """用收容所名稱搜尋認養資訊，連到該收容所的官方網頁。沒有收容所名稱時退回資料集頁面。"""
+    if not shelter:
+        return COA_PAGE
+    return "https://www.google.com/search?q=" + quote(f"{shelter} 認養")
 
 
 def _canon(text):
@@ -104,5 +114,6 @@ def build_cat(raw, today):
         "address": address,
         "image": _get(raw, "album_file"),
         "source": "農業部動物認領養",
-        "url": COA_PAGE,
+        "source_type": "public",  # public = 公家；之後加入的民間平台用 "private"
+        "url": shelter_search_url(shelter),
     }

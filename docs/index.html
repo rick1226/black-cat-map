@@ -17,6 +17,9 @@
     .media { width: 100%; aspect-ratio: 4 / 3; background: #8882; }
     .media img { width: 100%; height: 100%; object-fit: cover; display: block; }
     .placeholder { display: grid; place-items: center; color: #888; font-size: .9rem; }
+    .tag { display: inline-block; align-self: flex-start; font-size: .75rem; padding: 2px 8px; border-radius: 999px; border: 1px solid; }
+    .tag.public { color: #2563eb; border-color: #2563eb; }
+    .tag.private { color: #d97706; border-color: #d97706; }
     .card .body { padding: 10px; display: flex; flex-direction: column; gap: 4px; flex: 1; }
     .card h2 { font-size: 1rem; margin: 0; }
     .meta { font-size: .85rem; color: #777; }
@@ -38,6 +41,13 @@
   <select id="sort">
     <option value="">預設</option>
     <option value="age-asc">年齡：由小到大</option>
+  </select>
+
+  <label for="type">來源</label>
+  <select id="type">
+    <option value="">全部</option>
+    <option value="public">公家</option>
+    <option value="private">民間</option>
   </select>
 
   <p id="summary"></p>

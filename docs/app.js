@@ -12,6 +12,7 @@ const summaryEl = document.getElementById("summary");
 const emptyEl = document.getElementById("empty");
 const updatedEl = document.getElementById("updated");
 const sortEl = document.getElementById("sort");
+const typeEl = document.getElementById("type");
 
 let cats = [];
 
@@ -50,6 +51,10 @@ function matches(cat, selected) {
   return cat.county === selected;
 }
 
+function matchesType(cat, mode) {
+  return !mode || cat.source_type === mode;
+}
+
 function placeholder(cat) {
   return makeEl("div", "media placeholder", "無照片");
 }
@@ -75,12 +80,14 @@ function buildCard(cat) {
   card.append(buildMedia(cat));
 
   const body = makeEl("div", "body");
+  const isPrivate = cat.source_type === "private";
+  body.append(makeEl("span", `tag ${isPrivate ? "private" : "public"}`, isPrivate ? "民間" : "公家"));
   body.append(makeEl("h2", "", cat.name));
   const metaParts = [cat.county, cat.colour, cat.sex, cat.age].filter(Boolean);
   body.append(makeEl("div", "meta", metaParts.join("・")));
   if (cat.shelter) body.append(makeEl("div", "meta", cat.shelter));
 
-  const link = makeEl("a", "", "前往原站查看");
+  const link = makeEl("a", "", "搜尋此收容所");
   link.href = cat.url;
   link.target = "_blank";
   link.rel = "noopener noreferrer";
@@ -100,7 +107,10 @@ function sortCats(list, mode) {
 
 function render() {
   const selected = selectEl.value;
-  const visible = sortCats(cats.filter((cat) => matches(cat, selected)), sortEl.value);
+  const visible = sortCats(
+    cats.filter((cat) => matches(cat, selected) && matchesType(cat, typeEl.value)),
+    sortEl.value,
+  );
 
   gridEl.replaceChildren(...visible.map(buildCard));
   emptyEl.hidden = visible.length > 0;
@@ -128,4 +138,5 @@ async function load() {
 
 selectEl.addEventListener("change", render);
 sortEl.addEventListener("change", render);
+typeEl.addEventListener("change", render);
 load();

@@ -155,5 +155,28 @@ class AgeTests(unittest.TestCase):
         self.assertEqual(cat["age_rank"], 99)
 
 
+class LinkTests(unittest.TestCase):
+    def test_link_searches_shelter_name(self):
+        raw = {
+            "animal_id": "61",
+            "animal_kind": "貓",
+            "animal_colour": "黑色",
+            "shelter_name": "南投縣公立動物收容所",
+        }
+        url = build_cat(raw, TODAY)["url"]
+        self.assertTrue(url.startswith("https://www.google.com/search?q="))
+        self.assertIn("%E5%8D%97%E6%8A%95%E7%B8%A3", url)  # 「南投縣」的 URL 編碼
+
+    def test_link_falls_back_when_no_shelter(self):
+        raw = {"animal_id": "62", "animal_kind": "貓", "animal_colour": "黑色"}
+        self.assertEqual(build_cat(raw, TODAY)["url"], "https://data.gov.tw/dataset/85903")
+
+
+class SourceTypeTests(unittest.TestCase):
+    def test_government_source_tagged_public(self):
+        raw = {"animal_id": "60", "animal_kind": "貓", "animal_colour": "黑色"}
+        self.assertEqual(build_cat(raw, TODAY)["source_type"], "public")
+
+
 if __name__ == "__main__":
     unittest.main()
