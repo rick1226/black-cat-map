@@ -61,7 +61,7 @@ function matchesType(cat, mode) {
 }
 
 // 沒有照片時使用統一的黑貓占位圖；占位圖也載入失敗時，退回文字占位框
-const PLACEHOLDER_IMG = "assets/no-photo.jpg";
+const PLACEHOLDER_IMG = "assets/no-photo.png";
 
 function textPlaceholder() {
   return makeEl("div", "media placeholder", "無照片");
