@@ -4,10 +4,16 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>黑貓認養地圖</title>
+  <link rel="preconnect" href="https://www.pet.gov.tw">
+  <link rel="dns-prefetch" href="https://www.pet.gov.tw">
   <style>
     :root { color-scheme: light dark; font-family: system-ui, "Noto Sans TC", sans-serif; }
     body { margin: 0; padding: 16px; max-width: 960px; margin-inline: auto; }
+    header { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 12px; }
+    header .title { flex: 1; text-align: center; }
     header h1 { margin: 0 0 4px; font-size: 1.5rem; }
+    .brand-logo, .brand-mascot { height: 72px; width: auto; flex: none; }
+    #more { margin: 16px auto; display: block; font-size: 1rem; padding: 8px 20px; cursor: pointer; }
     #updated { color: #888; font-size: .9rem; margin: 0 0 12px; }
     label { font-weight: 600; margin-right: 8px; }
     select { font-size: 1rem; padding: 6px 8px; }
@@ -30,8 +36,12 @@
 </head>
 <body>
   <header>
-    <h1>黑貓認養地圖</h1>
-    <p id="updated">載入中…</p>
+    <img class="brand-logo" src="assets/logo.jpg" alt="黑貓閣樓">
+    <div class="title">
+      <h1>黑貓認養地圖</h1>
+      <p id="updated">載入中…</p>
+    </div>
+    <img class="brand-mascot" src="assets/mascot.jpg" alt="">
   </header>
 
   <label for="county">選擇縣市</label>
@@ -52,6 +62,7 @@
 
   <p id="summary"></p>
   <div id="grid"></div>
+  <button id="more" type="button" hidden>載入更多</button>
   <p id="empty" hidden>這個縣市目前沒有可認養的黑貓。</p>
 
   <footer>

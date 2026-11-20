@@ -13,6 +13,11 @@ const emptyEl = document.getElementById("empty");
 const updatedEl = document.getElementById("updated");
 const sortEl = document.getElementById("sort");
 const typeEl = document.getElementById("type");
+const moreEl = document.getElementById("more");
+
+// 一次只顯示一批卡片，點「載入更多」才顯示下一批，避免一次載入全部圖片造成卡頓
+const PAGE_SIZE = 24;
+let shown = PAGE_SIZE;
 
 let cats = [];
 
@@ -69,6 +74,7 @@ function buildMedia(cat) {
   img.src = cat.image;
   img.alt = cat.name;
   img.loading = "lazy";
+  img.decoding = "async";
   img.referrerPolicy = "no-referrer";
   img.addEventListener("error", () => wrap.replaceWith(placeholder(cat)));
   wrap.append(img);
@@ -112,11 +118,18 @@ function render() {
     sortEl.value,
   );
 
-  gridEl.replaceChildren(...visible.map(buildCard));
+  gridEl.replaceChildren(...visible.slice(0, shown).map(buildCard));
+  moreEl.hidden = visible.length <= shown;
   emptyEl.hidden = visible.length > 0;
   summaryEl.textContent = selected
     ? `共 ${visible.length} 隻黑貓`
     : `全台共 ${visible.length} 隻黑貓`;
+}
+
+// 篩選或排序改變時，從第一批重新開始
+function resetAndRender() {
+  shown = PAGE_SIZE;
+  render();
 }
 
 async function load() {
@@ -136,7 +149,11 @@ async function load() {
   render();
 }
 
-selectEl.addEventListener("change", render);
-sortEl.addEventListener("change", render);
-typeEl.addEventListener("change", render);
+selectEl.addEventListener("change", resetAndRender);
+sortEl.addEventListener("change", resetAndRender);
+typeEl.addEventListener("change", resetAndRender);
+moreEl.addEventListener("click", () => {
+  shown += PAGE_SIZE;
+  render();
+});
 load();
